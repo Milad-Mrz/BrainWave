@@ -3,7 +3,6 @@ import os
 import time
 import random
 
-
 import kivy
 from kivy.app import App
 from kivy.app import App
