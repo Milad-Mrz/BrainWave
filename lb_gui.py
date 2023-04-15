@@ -17,11 +17,79 @@ from kivy.uix.checkbox import CheckBox
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.uix.image import AsyncImage
+from lb_main import *
 
 
 
-class Float_Layout(App):
+class BladeLearner2049(App):
     def build(self):
+        
+        def gui_home(study_options):
+            self.study_options = study_options
+            study_btn.bind(on_press= gui_Category())
+            manage_btn.bind(on_press= gui_manage())
+
+
+        
+        def gui_category():
+            self.study_options #input list
+            self.chosen_category = chosen_category # output
+            gui_study_type()
+            btn_return.bind(on_press= gui_home(self.study_options))
+
+
+
+        def gui_study_type():
+            btn2.bind(on_press= gui_normal_material)
+            btn3.bind(on_press= gui_common_mistakes())
+
+            btn_return.bind(on_press= gui_category())
+            btn_home.bind(on_press= gui_home(self.study_options))
+
+
+
+
+        def gui_normal_material():
+            mainStudy(self.chosen_category, 0)
+
+            btn_return.bind(on_press= gui_study_type())
+            btn_home.bind(on_press= gui_home(self.study_options))
+
+
+
+        def gui_common_mistakes():
+            mainStudy(self.chosen_category, 1)
+
+            btn_return.bind(on_press= gui_study_type())
+            btn_home.bind(on_press= gui_home(self.study_options))
+
+
+        def gui_readcard():
+            yes_btn.bind(on_press= gui_yes())
+            no_btn.bind(on_press= gui_no())
+            card_btn.bind(on_press= gui_reveal())
+
+
+            btn_return.bind(on_press= study_type())
+            btn_home.bind(on_press= gui_home(self.study_options))
+
+        # if mistake == 1 : 
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         # fake buttons bid func. for other buttons which act as label with back ground , ...
         def button_fake(instance):
             fake_value = 0  # --------------------------------------
