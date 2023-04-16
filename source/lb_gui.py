@@ -17,7 +17,7 @@ from kivy.uix.checkbox import CheckBox
 from kivy.clock import Clock
 from kivy.config import Config
 from kivy.uix.image import AsyncImage
-from lb_main import *
+from BladeLearner2049.source.lb_main import *
 
 
 

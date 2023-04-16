@@ -3,7 +3,7 @@ import os
 import time
 import random
 import subprocess
-from lb_gui import *
+from BladeLearner2049.source.lb_gui import *
 
 
 # Category,BoxNo,SideA,SideB,ActiveSide,TimeNextREV,MistakeNo
