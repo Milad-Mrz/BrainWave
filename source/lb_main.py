@@ -21,17 +21,20 @@ answer_int = 0
 #  120: to be reviewed after 4 months
 #  999: output
 
+def mainDataCheck(df):
+    df = df
+    return df
+
 def mainMapReduce(file_name):
     # read file - file_name = "data.csv"
     df = pd.read_csv(file_name)
     #clean the data
-    clean(df)
+    df = mainDataCheck(df)
     # read categories
     study_options = df['Category'].unique().tolist()
     # call gui: first page containing all options to study 
     # ( course_A, ..., course_Z, French, Skill_A, ..., Skill_Z, Startup, Book, favourite_dialogues, work_place_dialogues, pickup_dialogues, poems)
-    gui_home(study_options)
-
+    return study_options
 
 def mainStudy(chosen_category, mistake):
     #category_subset = df[(df['Category'] == chosen_category)]
@@ -53,14 +56,14 @@ def mainStudy(chosen_category, mistake):
         study_subset.drop(row)
         len_study -= 1
 
-    data_writer(df)
+    mainDataWriter(df)
 
 
     
     #subset = df[(df['Age'] > 30) & (df['City'] == 'London')]
 
 
-def lietner(row, answer):
+def mainLietner(row, answer):
     box_id = [-1, 0, 1, 3, 7, 15, 30, 60, 120]
     # update box number to zero if answer was negative
     if answer == 0 :
@@ -84,17 +87,19 @@ def lietner(row, answer):
                 row['ActiveSide'] == 0
     return row
 
-def data_writer(df):
+def mainDataWriter(df):
     df.to_csv("data.csv", index=False)
 
 if __name__ == '__main__':
     BladeLearner2049().run()
 
-
+'''
 df, df_temp = select_course("data.csv")
 data_rev, len_mis, len_rev, len_new, len_001, len_003, len_007, len_015, len_030, len_060, len_120 = data_monitor(df)
 df = study(df, data_rev)
 data_writer(df, df_temp)
+'''
+
 
 
 

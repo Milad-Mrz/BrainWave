@@ -22,16 +22,25 @@ from lb_main import *
 
 
 class BladeLearner2049(App):
-    def build(self):
+    def build(self): 
         
-        def gui_home(study_options):
+        def gui_home():
+            # setting  main window features
+
+            study_options  = mainMapReduce()
             self.study_options = study_options
+
+            # setting a popup window on top for home page and buttons
+
             study_btn.bind(on_press= gui_Category())
             manage_btn.bind(on_press= gui_manage())
 
 
         
         def gui_category():
+            # close last pop 
+            # setting a popup window on top for the page and buttons
+
             self.study_options #input list
             self.chosen_category = chosen_category # output
             gui_study_type()
@@ -40,7 +49,10 @@ class BladeLearner2049(App):
 
 
         def gui_study_type():
-            btn2.bind(on_press= gui_normal_material)
+            # close last pop 
+            # setting a popup window on top for the page and buttons
+
+            btn2.bind(on_press= gui_normal_study)
             btn3.bind(on_press= gui_common_mistakes())
 
             btn_return.bind(on_press= gui_category())
@@ -49,45 +61,41 @@ class BladeLearner2049(App):
 
 
 
-        def gui_normal_material():
-            mainStudy(self.chosen_category, 0)
-
+        def gui_normal_study():
+            # setting parameters
             btn_return.bind(on_press= gui_study_type())
             btn_home.bind(on_press= gui_home(self.study_options))
-
+            
+            mainStudy(self.chosen_category, 1)            
+            gui_read_card()
 
 
         def gui_common_mistakes():
-            mainStudy(self.chosen_category, 1)
-
+            # setting parameters
             btn_return.bind(on_press= gui_study_type())
             btn_home.bind(on_press= gui_home(self.study_options))
+            
+            mainStudy(self.chosen_category, 1)
+            gui_read_card()
 
-
-        def gui_readcard():
-            yes_btn.bind(on_press= gui_yes())
-            no_btn.bind(on_press= gui_no())
-            card_btn.bind(on_press= gui_reveal())
-
-
-            btn_return.bind(on_press= study_type())
+        def gui_read_card():
+            
+            card_btn.bind(on_press= gui_revealed_card())
+            btn_return.bind(on_press= gui_study_type())
             btn_home.bind(on_press= gui_home(self.study_options))
 
         # if mistake == 1 : 
             
+        def gui_revealed_card():
+            yes_btn.bind(on_press= gui_yes())
+            no_btn.bind(on_press= gui_no())
 
 
+        def gui_yes():
+            self.answer = 1
 
-
-
-
-
-
-
-
-
-
-
+        def gui_no():
+            self.answer = 0
 
 
         # fake buttons bid func. for other buttons which act as label with back ground , ...
