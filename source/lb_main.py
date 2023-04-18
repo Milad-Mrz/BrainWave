@@ -3,7 +3,7 @@ import os
 import time
 import random
 import subprocess
-from BladeLearner2049.source.lb_gui import *
+from lb_gui import *
 
 
 # Category,BoxNo,SideA,SideB,ActiveSide,TimeNextREV,MistakeNo
@@ -22,6 +22,8 @@ answer_int = 0
 #  999: output
 
 def mainDataCheck(df):
+    # clean data 
+    # check for 1-duplicates 2-zeros 3-... 
     df = df
     return df
 
@@ -36,7 +38,7 @@ def mainMapReduce(file_name):
     # ( course_A, ..., course_Z, French, Skill_A, ..., Skill_Z, Startup, Book, favourite_dialogues, work_place_dialogues, pickup_dialogues, poems)
     return study_options
 
-def mainStudy(chosen_category, mistake):
+def mainStudy(df, chosen_category, mistake):
     #category_subset = df[(df['Category'] == chosen_category)]
     if mistake == 1 : 
         study_subset = df[(df['Category'] == chosen_category) & (df['MistakeNo'] > 2) ] 
