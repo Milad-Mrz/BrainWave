@@ -27,7 +27,8 @@ def mainDataCheck(df):
     df = df
     return df
 
-def mainMapReduce(file_name):
+def mainMapReduce():
+    file_name = './data/data.csv'
     # read file - file_name = "data.csv"
     df = pd.read_csv(file_name)
     #clean the data
@@ -38,12 +39,12 @@ def mainMapReduce(file_name):
     # ( course_A, ..., course_Z, French, Skill_A, ..., Skill_Z, Startup, Book, favourite_dialogues, work_place_dialogues, pickup_dialogues, poems)
     return study_options
 
-def mainStudy(df, chosen_category, mistake):
-    #category_subset = df[(df['Category'] == chosen_category)]
+def mainStudy(df, selected_category, mistake):
+    #category_subset = df[(df['Category'] == selected_category)]
     if mistake == 1 : 
-        study_subset = df[(df['Category'] == chosen_category) & (df['MistakeNo'] > 2) ] 
+        study_subset = df[(df['Category'] == selected_category) & (df['MistakeNo'] > 2) ] 
     else:    
-        study_subset = df[(df['Category'] == chosen_category) & (df['TimeNextREV'] < int(time.time() / 60.)) ]
+        study_subset = df[(df['Category'] == selected_category) & (df['TimeNextREV'] < int(time.time() / 60.)) ]
     len_study = len(study_subset)
    
     #run through the subset with a loop according to number of rows
@@ -90,10 +91,9 @@ def mainLietner(row, answer):
     return row
 
 def mainDataWriter(df):
-    df.to_csv("data.csv", index=False)
+    df.to_csv("./data/data_bu.csv", index=False)
 
-if __name__ == '__main__':
-    BladeLearner2049().run()
+
 
 '''
 df, df_temp = select_course("data.csv")

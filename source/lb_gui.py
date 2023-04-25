@@ -24,11 +24,12 @@ from lb_main import *
 class BladeLearner2049(App):
     def build(self):  
         self.white = (1, 1, 1, 1)
-        self.study_options  = []
+        self.study_options  = ['Option1', 'Option2', 'Option3', 'Option4', 'Option5']
+        self.selected_category = None
+        self.selected_study_type = None
 
-        def gui_home():
-            
-            #self.study_options  = mainMapReduce()
+        def gui_home(instance):
+            self.study_options  = mainMapReduce()
             # setting  main window features
             home = FloatLayout()
 
@@ -41,15 +42,15 @@ class BladeLearner2049(App):
             study_btn = Button(text='Study Cards', 
                         background_color=(1, 1, 1, 0),
                         color=self.white,
-                        size_hint=(0.4, 0.1),
-                        pos_hint={'center_x': 0.5, 'center_y': 0.6},
+                        size_hint=(0.4, 0.07),
+                        pos_hint={'center_x': 0.5, 'center_y': 0.54},
                         font_name='Allura_Regular',
                         font_size=45)
             
             manage_btn = Button(text='Manage Cards', 
                         background_color=(1, 1, 1, 0),
                         color=self.white,
-                        size_hint=(0.4, 0.1),
+                        size_hint=(0.4, 0.07),
                         pos_hint={'center_x': 0.5, 'center_y': 0.45},
                         font_name='Allura_Regular',
                         font_size=20)
@@ -61,82 +62,183 @@ class BladeLearner2049(App):
             home.add_widget(center_line)
             home.add_widget(study_btn)
             home.add_widget(manage_btn)
-
+            popup.title = ' '
             popup.content = home
             popup.open()
         
 
         def gui_category(instance):
-            # close last pop 
-            popup.dismiss()
+            category = FloatLayout()
 
             # setting a popup window on top for the page and buttons
             # create a grid of all topics and let user choose
+            # create a grid of buttons for each option
+            len_option = len(self.study_options)
+            if len_option > 20 : len_option = 20
+            btn = [0]*len_option
+            btn_columns = 4
+            btn_size = 0.15
+            for i in range(len_option):
+                option = self.study_options[i]
+                row = i // btn_columns
+                col = i % btn_columns
+                btn[i] = Button(text=option,
+                             background_color=(1, 1, 1, 0.0), 
+                             size_hint = (btn_size, btn_size),
+                             color=self.white,
+                             font_name='Allura_Regular',
+                             font_size=35)               
+                btn[i].pos_hint = {'x':  0.5 - btn_size*4/2.  + col*(btn_size+0.05)-0.05/2.*(btn_columns-1), 'y': 0.5 + int(len_option/8.)*btn_size - row*0.15 }
+                btn[i].bind (on_press=select_category)
+                category.add_widget(btn[i])
 
-            for options in self.study_options :  #input list
-                print(options)
-
-            #self.chosen_category = chosen_category # output
-            #gui_study_type()
-
-            #btn_return.bind(on_press= gui_home(self.study_options))
-
-            category = FloatLayout()
+            return_btn = Button(text='- Return -', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.1),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.1},
+                                font_name='Allura_Regular',
+                                font_size=25)
+            return_btn.bind(on_press=gui_home)
+            category.add_widget(return_btn)           
 
             popup.content = category
-            popup.open()
+            popup.title = 'Available Categories:'
 
-
-
-
-
+        def select_category(instance):
+            if instance.text != ' ':
+                # getting the text of a button
+                self.selected_category = str(instance.text)
+                print(self.selected_category)
+                gui_study_type()
 
         def gui_study_type():
-            # close last pop 
-            # setting a popup window on top for the page and buttons
+            study_type = FloatLayout()
 
-            # Create a button that sets the parameter to "Hello"
-            btn_Study = Button(text="Study", command=lambda: mainStudy(self.chosen_category, 0) )
+            center_line = Label(text='____________________________________________',
+                                font_size ='18sp', size_hint=(0.2, 0.2),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.5})
+            center_line.color = (1,1,1,1)
 
-            # Create a button that sets the parameter to "World"
-            btn_common_mistakes = Button(text="Common Mistakes", command=lambda: mainStudy(self.chosen_category, 1) )
-
-
-            btn_return.bind(on_press= gui_category())
-            btn_home.bind(on_press= gui_home(self.study_options))
-
-            pop_study_type.add_widget(btn_nxt)
-
-
-
-        def gui_normal_study():
-            # close last pop 
-            # setting parameters
-
-
-            btn_return.bind(on_press= gui_study_type())
-            btn_home.bind(on_press= gui_home(self.study_options))
+            btn_Study = Button(text='Start Review', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.07),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.525},
+                                font_name='Allura_Regular',
+                                font_size=45)
             
-            mainStudy(self.chosen_category, 1)            
-
-
-        def gui_common_mistakes():
-            # close last pop 
-            # setting parameters
-            btn_return.bind(on_press= gui_study_type())
-            btn_home.bind(on_press= gui_home(self.study_options))
+            btn_common_mistakes = Button(text='Common Mistakes', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.07),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.45},
+                                font_name='Allura_Regular',
+                                font_size=25)
             
-            mainStudy(self.chosen_category, 1)
-            gui_read_card()
+            btn_home = Button(text='- Home -', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.1),
+                                pos_hint={'center_x': 0.4, 'center_y': 0.1},
+                                font_name='Allura_Regular',
+                                font_size=25)
 
-        def gui_read_card():
-            # close last pop 
-            # setting a popup window on top for the page and buttons
+            return_btn = Button(text='- Return -', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.1),
+                                pos_hint={'center_x': 0.6, 'center_y': 0.1},
+                                font_name='Allura_Regular',
+                                font_size=25)
+            
+            study_type.add_widget(center_line)
+            
+            btn_Study.bind(on_press=gui_normal_study)
+            study_type.add_widget(btn_Study)  
+
+            btn_common_mistakes.bind(on_press=gui_common_mistakes)
+            study_type.add_widget(btn_common_mistakes) 
+
+            btn_home.bind(on_press=gui_home)
+            study_type.add_widget(btn_home) 
+
+            return_btn.bind(on_press=gui_category)
+            study_type.add_widget(return_btn)          
+
+            popup.content = study_type
+            popup.title = ' '
+
+        def gui_normal_study(instance):
+            mainStudy(self.selected_category, 0)
+            print('0') 
+                    
+
+        def gui_common_mistakes(instance):
+            mainStudy(self.selected_category, 1)
+            print('1') 
+            
+
+        def gui_read_card(row):
+            study_type = FloatLayout()
+
+            center_line = Label(text='____________________________________________',
+                                font_size ='18sp', size_hint=(0.2, 0.2),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.5})
+            center_line.color = (1,1,1,1)
+
+            btn_Study = Button(text='Start Review', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.07),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.525},
+                                font_name='Allura_Regular',
+                                font_size=45)
+            
+            btn_common_mistakes = Button(text='Common Mistakes', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.07),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.45},
+                                font_name='Allura_Regular',
+                                font_size=25)
+            
+            btn_home = Button(text='- Home -', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.1),
+                                pos_hint={'center_x': 0.4, 'center_y': 0.1},
+                                font_name='Allura_Regular',
+                                font_size=25)
+
+            return_btn = Button(text='- Return -', 
+                                background_color=(1, 1, 1, 0),
+                                color=self.white,
+                                size_hint=(0.4, 0.1),
+                                pos_hint={'center_x': 0.6, 'center_y': 0.1},
+                                font_name='Allura_Regular',
+                                font_size=25)
+            
+            study_type.add_widget(center_line)
+            
+            btn_Study.bind(on_press=gui_normal_study)
+            study_type.add_widget(btn_Study)  
+
+            btn_common_mistakes.bind(on_press=gui_common_mistakes)
+            study_type.add_widget(btn_common_mistakes) 
+
+            btn_home.bind(on_press=gui_home)
+            study_type.add_widget(btn_home) 
+
+            return_btn.bind(on_press=gui_category)
+            study_type.add_widget(return_btn)          
+
+            popup.content = study_type
+            popup.title = ' '
+            #Setting a popup window on top for the page and buttons
             card_btn.bind(on_press= gui_revealed_card())
             btn_return.bind(on_press= gui_study_type())
             btn_home.bind(on_press= gui_home(self.study_options))
-
-        # if mistake == 1 : 
             
         def gui_revealed_card():
             # update last pop 
@@ -186,7 +288,7 @@ class BladeLearner2049(App):
         popup.background_color = color_pop
 
 
-        gui_home()
+        gui_home('1')
         return layout
 
 
