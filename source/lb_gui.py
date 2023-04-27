@@ -1,6 +1,4 @@
 import pandas as pd
-import os
-import time
 import random
 
 import kivy
@@ -24,12 +22,20 @@ from lb_main import *
 class BladeLearner2049(App):
     def build(self):  
         self.white = (1, 1, 1, 1)
+        self.hide =  (1, 1, 1, 0)
+
         self.study_options  = ['Option1', 'Option2', 'Option3', 'Option4', 'Option5']
         self.selected_category = None
-        self.selected_study_type = None
+        self.common_mistake = None
+        self.data_frame = None
+        self.row = None
+        self.result = None
+        self.reveal_active = 0
+        self.answer = None
+        self.study_subset = []
 
         def gui_home(instance):
-            self.study_options  = mainMapReduce()
+            self.study_options, self.data_frame  = mainMapReduce()
             # setting  main window features
             home = FloatLayout()
 
@@ -66,7 +72,6 @@ class BladeLearner2049(App):
             popup.content = home
             popup.open()
         
-
         def gui_category(instance):
             category = FloatLayout()
 
@@ -77,13 +82,13 @@ class BladeLearner2049(App):
             if len_option > 20 : len_option = 20
             btn = [0]*len_option
             btn_columns = 4
-            btn_size = 0.15
+            btn_size = 0.15 
             for i in range(len_option):
                 option = self.study_options[i]
                 row = i // btn_columns
                 col = i % btn_columns
                 btn[i] = Button(text=option,
-                             background_color=(1, 1, 1, 0.0), 
+                             background_color=self.hide, 
                              size_hint = (btn_size, btn_size),
                              color=self.white,
                              font_name='Allura_Regular',
@@ -92,15 +97,15 @@ class BladeLearner2049(App):
                 btn[i].bind (on_press=select_category)
                 category.add_widget(btn[i])
 
-            return_btn = Button(text='- Return -', 
-                                background_color=(1, 1, 1, 0),
+            btn_return = Button(text='- Return -', 
+                                background_color=self.hide,
                                 color=self.white,
                                 size_hint=(0.4, 0.1),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.1},
                                 font_name='Allura_Regular',
                                 font_size=25)
-            return_btn.bind(on_press=gui_home)
-            category.add_widget(return_btn)           
+            btn_return.bind(on_press=gui_home)
+            category.add_widget(btn_return)           
 
             popup.content = category
             popup.title = 'Available Categories:'
@@ -109,7 +114,7 @@ class BladeLearner2049(App):
             if instance.text != ' ':
                 # getting the text of a button
                 self.selected_category = str(instance.text)
-                print(self.selected_category)
+                #print(self.selected_category)
                 gui_study_type()
 
         def gui_study_type():
@@ -121,7 +126,7 @@ class BladeLearner2049(App):
             center_line.color = (1,1,1,1)
 
             btn_Study = Button(text='Start Review', 
-                                background_color=(1, 1, 1, 0),
+                                background_color=self.hide,
                                 color=self.white,
                                 size_hint=(0.4, 0.07),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.525},
@@ -129,7 +134,7 @@ class BladeLearner2049(App):
                                 font_size=45)
             
             btn_common_mistakes = Button(text='Common Mistakes', 
-                                background_color=(1, 1, 1, 0),
+                                background_color=self.hide,
                                 color=self.white,
                                 size_hint=(0.4, 0.07),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.45},
@@ -137,15 +142,15 @@ class BladeLearner2049(App):
                                 font_size=25)
             
             btn_home = Button(text='- Home -', 
-                                background_color=(1, 1, 1, 0),
+                                background_color=self.hide,
                                 color=self.white,
                                 size_hint=(0.4, 0.1),
                                 pos_hint={'center_x': 0.4, 'center_y': 0.1},
                                 font_name='Allura_Regular',
                                 font_size=25)
 
-            return_btn = Button(text='- Return -', 
-                                background_color=(1, 1, 1, 0),
+            btn_return = Button(text='- Return -', 
+                                background_color=self.hide,
                                 color=self.white,
                                 size_hint=(0.4, 0.1),
                                 pos_hint={'center_x': 0.6, 'center_y': 0.1},
@@ -163,114 +168,181 @@ class BladeLearner2049(App):
             btn_home.bind(on_press=gui_home)
             study_type.add_widget(btn_home) 
 
-            return_btn.bind(on_press=gui_category)
-            study_type.add_widget(return_btn)          
+            btn_return.bind(on_press=gui_category)
+            study_type.add_widget(btn_return)          
 
             popup.content = study_type
             popup.title = ' '
 
+
         def gui_normal_study(instance):
-            mainStudy(self.selected_category, 0)
-            print('0') 
-                    
+            self.common_mistake = 0
+            df = self.data_frame
+            if len(self.study_subset) == 0 :
+                self.study_subset = df[(df['Category'] == self.selected_category) & (df['TimeNextREV'] < int(time.time() / 60.)) ]
+                if len(self.study_subset) == 0 :
+                    #exit and write
+                    mainDataWriter(self.data_frame) 
+            else:
+                gui_read_card(0)            
+
 
         def gui_common_mistakes(instance):
-            mainStudy(self.selected_category, 1)
-            print('1') 
-            
+            self.common_mistake = 1
+            df = self.data_frame
+            if len(self.study_subset) == 0 :
+                self.study_subset = df[(df['Category'] == self.selected_category) & (df['MistakeNo'] > 2) & (df['TimeNextREV'] < int(time.time() / 60.)) ]
+                if len(self.study_subset) == 0 :
+                    #exit and write
+                    mainDataWriter(self.data_frame) 
+            else:               
+                gui_read_card(0)            
+                
 
-        def gui_read_card(row):
-            study_type = FloatLayout()
+        def gui_read_card(instance):
+            #read a random row
+            # show the card on gui and run the question and apply lietner data
+            self.row = self.study_subset.sample()
+            # update the row in main df and remove the row from subset 
 
-            center_line = Label(text='____________________________________________',
+            sideA = (self.row['SideA'].values)[0]
+            sideB = (self.row['SideB'].values)[0]
+            #print(sideA,sideB)
+            if (self.row['ActiveSide'].values)[0] == 1 : 
+                sideA = (self.row['SideB'].values)[0]
+                sideB = (self.row['SideA'].values)[0]
+
+            record = '[ Box - ' + str((self.row['BoxNo'].values)[0]) + ' ]'
+
+            read_card = FloatLayout()
+
+            center_line = Label(text= '____________________________________________',
+                                font_size ='18sp', size_hint=(0.2, 0.2),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.75})
+            center_line.color = (1,1,1,1)
+
+            center_line2 = Label(text= '____________________________________________',
                                 font_size ='18sp', size_hint=(0.2, 0.2),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.5})
             center_line.color = (1,1,1,1)
 
-            btn_Study = Button(text='Start Review', 
-                                background_color=(1, 1, 1, 0),
+            btn_card = Button(text= sideA, 
+                                background_color=self.hide,
                                 color=self.white,
-                                size_hint=(0.4, 0.07),
-                                pos_hint={'center_x': 0.5, 'center_y': 0.525},
+                                size_hint=(0.4, 0.1),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.6},
                                 font_name='Allura_Regular',
                                 font_size=45)
             
-            btn_common_mistakes = Button(text='Common Mistakes', 
-                                background_color=(1, 1, 1, 0),
+            btn_record = Button(text= record, 
+                                background_color=self.hide,
                                 color=self.white,
                                 size_hint=(0.4, 0.07),
-                                pos_hint={'center_x': 0.5, 'center_y': 0.45},
+                                pos_hint={'center_x': 0.5, 'center_y': 0.3},
                                 font_name='Allura_Regular',
-                                font_size=25)
+                                font_size=20)
             
-            btn_home = Button(text='- Home -', 
-                                background_color=(1, 1, 1, 0),
+            btn_home = Button(text= '- Home -', 
+                                background_color=self.hide,
                                 color=self.white,
                                 size_hint=(0.4, 0.1),
                                 pos_hint={'center_x': 0.4, 'center_y': 0.1},
                                 font_name='Allura_Regular',
                                 font_size=25)
 
-            return_btn = Button(text='- Return -', 
-                                background_color=(1, 1, 1, 0),
+            btn_return = Button(text= '- Return -', 
+                                background_color=self.hide,
                                 color=self.white,
                                 size_hint=(0.4, 0.1),
                                 pos_hint={'center_x': 0.6, 'center_y': 0.1},
                                 font_name='Allura_Regular',
                                 font_size=25)
             
-            study_type.add_widget(center_line)
             
-            btn_Study.bind(on_press=gui_normal_study)
-            study_type.add_widget(btn_Study)  
+            btn_yes = Button(text= '< Yes >', 
+                                background_color=self.hide,
+                                color=self.hide,
+                                size_hint=(0.4, 0.1),
+                                pos_hint={'center_x': 0.7, 'center_y': 0.65},
+                                font_name='Allura_Regular',
+                                font_size=25)
+            
+            btn_no = Button(text= '< No >', 
+                                background_color=self.hide,
+                                color=self.hide,
+                                size_hint=(0.4, 0.1),
+                                pos_hint={'center_x': 0.7, 'center_y': 0.55},
+                                font_name='Allura_Regular',
+                                font_size=25)
+                
+            def gui_reveal_card(instance):
+                btn_card.text = sideB
+                btn_yes.color = self.white
+                btn_no.color = self.white
+                btn_card.bind(on_press=gui_pass)
 
-            btn_common_mistakes.bind(on_press=gui_common_mistakes)
-            study_type.add_widget(btn_common_mistakes) 
+            def gui_yes(instance):
+                self.answer = 1
+                btn_yes.color = self.hide
+                btn_no.color = self.hide 
+                self.result = mainLietner(self.row, 1)
+                self.data_frame.update(self.result)
+                mainDataWriter(self.data_frame)
+                if self.common_mistake == 1:
+                    gui_common_mistakes()         
+                else:
+                    gui_normal_study()
 
-            btn_home.bind(on_press=gui_home)
-            study_type.add_widget(btn_home) 
 
-            return_btn.bind(on_press=gui_category)
-            study_type.add_widget(return_btn)          
+            def gui_no(instance):
+                self.answer = 0
+                btn_yes.color = self.hide
+                btn_no.color = self.hide 
+                self.result = mainLietner(self.row, 0)
+                self.data_frame.update(self.result)
+                mainDataWriter(self.data_frame)
+                if self.common_mistake == 1:
+                    gui_common_mistakes()         
+                else:
+                    gui_normal_study()
 
-            popup.content = study_type
+            def gui_pass(instance):
+                pass
+
+
+            def b_home(instance):
+                mainDataWriter(self.data_frame)
+                gui_home()
+
+            def b_return(instance):
+                mainDataWriter(self.data_frame)
+                gui_category()
+
+
+            read_card.add_widget(center_line)
+            read_card.add_widget(center_line2)
+            read_card.add_widget(btn_record) 
+            
+            btn_card.bind(on_press=gui_reveal_card)
+            read_card.add_widget(btn_card)  
+
+            btn_home.bind(on_press=b_home)
+            read_card.add_widget(btn_home) 
+
+            btn_return.bind(on_press=b_return)
+            read_card.add_widget(btn_return)  
+
+            btn_yes.bind(on_press=gui_yes)
+            read_card.add_widget(btn_yes)
+
+            btn_no.bind(on_press=gui_no)
+            read_card.add_widget(btn_no)        
+
+            popup.content = read_card
             popup.title = ' '
-            #Setting a popup window on top for the page and buttons
-            card_btn.bind(on_press= gui_revealed_card())
-            btn_return.bind(on_press= gui_study_type())
-            btn_home.bind(on_press= gui_home(self.study_options))
-            
-        def gui_revealed_card():
-            # update last pop 
-            # setting a popup window on top for the page and buttons
 
-            # Create a button that sets the parameter to "Hello"
-            btn_yes = Button(root, text="Yes", command=lambda: mainStudy(self.chosen_category, 1) )
-            btn_yes.pack()
+            return
 
-            # Create a button that sets the parameter to "World"
-            btn_no = Button(root, text="No", command=lambda: mainStudy(self.chosen_category, 1) )
-            btn_no.pack()
-
-            yes_btn.bind(on_press= gui_yes())
-            no_btn.bind(on_press= gui_no())
-
-
-        def gui_yes():
-            self.answer = 1
-
-        def gui_no():
-            self.answer = 0
-
-
-        def button_empty(instance):
-            # fake buttons bid func. for other buttons which act as label with back ground , ...
-            value = 0
-
-
-
-
-        
 
         # build GUI background page
         layout = FloatLayout(size=(1200, 1600), size_hint=(1, 1))

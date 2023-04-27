@@ -1,8 +1,5 @@
 import pandas as pd
-import os
 import time
-import random
-import subprocess
 from lb_gui import *
 
 
@@ -28,8 +25,8 @@ def mainDataCheck(df):
     return df
 
 def mainMapReduce():
-    file_name = './data/data.csv'
-    # read file - file_name = "data.csv"
+    file_name = 'BladeLearner2049/data/data.csv'
+    # read file - file_name = "data.csv"  /home/milad/Desktop/Current Project/LearningBox/BladeLearner2049/data/data.csv   
     df = pd.read_csv(file_name)
     #clean the data
     df = mainDataCheck(df)
@@ -37,34 +34,18 @@ def mainMapReduce():
     study_options = df['Category'].unique().tolist()
     # call gui: first page containing all options to study 
     # ( course_A, ..., course_Z, French, Skill_A, ..., Skill_Z, Startup, Book, favourite_dialogues, work_place_dialogues, pickup_dialogues, poems)
-    return study_options
+    return study_options, df
 
-def mainStudy(df, selected_category, mistake):
+def mainSubset(selected_category, mistake, df):
     #category_subset = df[(df['Category'] == selected_category)]
     if mistake == 1 : 
         study_subset = df[(df['Category'] == selected_category) & (df['MistakeNo'] > 2) ] 
     else:    
         study_subset = df[(df['Category'] == selected_category) & (df['TimeNextREV'] < int(time.time() / 60.)) ]
-    len_study = len(study_subset)
-   
-    #run through the subset with a loop according to number of rows
-    while len_study > 0 :
-        #read a random row
-        row = study_subset.loc[random.randint(0, len_study-1)]
-        # show the card on gui and run the question and apply lietner data
-        row_result = gui_readcard(row)
-        # update the row in main df and remove the row from subset 
-        if mistake == 0 : df.update(row_result)
 
-        study_subset.drop(row)
-        len_study -= 1
+    return study_subset
 
-    mainDataWriter(df)
-
-
-    
     #subset = df[(df['Age'] > 30) & (df['City'] == 'London')]
-
 
 def mainLietner(row, answer):
     box_id = [-1, 0, 1, 3, 7, 15, 30, 60, 120]
