@@ -212,7 +212,7 @@ class BladeLearner2049(App):
                 sideA = (self.row['SideB'].values)[0]
                 sideB = (self.row['SideA'].values)[0]
 
-            record = '[ Box - ' + str((self.row['BoxNo'].values)[0]) + ' ]'
+            record = '[ Box - ' + str(int((self.row['BoxNo'].values)[0])) + ' ]'
 
             read_card = FloatLayout()
 
@@ -263,7 +263,7 @@ class BladeLearner2049(App):
                                 background_color=self.hide,
                                 color=self.hide,
                                 size_hint=(0.4, 0.1),
-                                pos_hint={'center_x': 0.7, 'center_y': 0.65},
+                                pos_hint={'center_x': 0.85, 'center_y': 0.65},
                                 font_name='Allura_Regular',
                                 font_size=25)
             
@@ -271,7 +271,7 @@ class BladeLearner2049(App):
                                 background_color=self.hide,
                                 color=self.hide,
                                 size_hint=(0.4, 0.1),
-                                pos_hint={'center_x': 0.7, 'center_y': 0.55},
+                                pos_hint={'center_x': 0.85, 'center_y': 0.55},
                                 font_name='Allura_Regular',
                                 font_size=25)
                 
@@ -289,9 +289,9 @@ class BladeLearner2049(App):
                 self.data_frame.update(self.result)
                 mainDataWriter(self.data_frame)
                 if self.common_mistake == 1:
-                    gui_common_mistakes()         
+                    gui_common_mistakes(1)         
                 else:
-                    gui_normal_study()
+                    gui_normal_study(1)
 
 
             def gui_no(instance):
@@ -302,9 +302,9 @@ class BladeLearner2049(App):
                 self.data_frame.update(self.result)
                 mainDataWriter(self.data_frame)
                 if self.common_mistake == 1:
-                    gui_common_mistakes()         
+                    gui_common_mistakes(1)         
                 else:
-                    gui_normal_study()
+                    gui_normal_study(1)
 
             def gui_pass(instance):
                 pass
@@ -312,11 +312,11 @@ class BladeLearner2049(App):
 
             def b_home(instance):
                 mainDataWriter(self.data_frame)
-                gui_home()
+                gui_home(1)
 
             def b_return(instance):
                 mainDataWriter(self.data_frame)
-                gui_category()
+                gui_category(1)
 
 
             read_card.add_widget(center_line)
@@ -360,24 +360,7 @@ class BladeLearner2049(App):
         popup.background_color = color_pop
 
 
-        gui_home('1')
-        return layout
-
-
-        
-        '''
-        btn = Button(text='____________________________________________',
-                    
-                    background_color=(0.4, 0.4, 0.4, 0.93),
-                    color=(1, 1, 1, 0.9),
-                    size_hint=(bsh_x, bsh_y),
-                    pos_hint={'center_x': x_pos, 'center_y': y_pos})
-                    
-
-        btn.bind(on_press=button_empty)
-
-        layout.add_widget(btn)
-        '''
+        gui_home(1)
         return layout
 
 if __name__ == '__main__':

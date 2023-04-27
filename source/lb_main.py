@@ -24,6 +24,7 @@ def mainDataCheck(df):
     df = df
     return df
 
+
 def mainMapReduce():
     file_name = 'BladeLearner2049/data/data.csv'
     # read file - file_name = "data.csv"  /home/milad/Desktop/Current Project/LearningBox/BladeLearner2049/data/data.csv   
@@ -36,16 +37,6 @@ def mainMapReduce():
     # ( course_A, ..., course_Z, French, Skill_A, ..., Skill_Z, Startup, Book, favourite_dialogues, work_place_dialogues, pickup_dialogues, poems)
     return study_options, df
 
-def mainSubset(selected_category, mistake, df):
-    #category_subset = df[(df['Category'] == selected_category)]
-    if mistake == 1 : 
-        study_subset = df[(df['Category'] == selected_category) & (df['MistakeNo'] > 2) ] 
-    else:    
-        study_subset = df[(df['Category'] == selected_category) & (df['TimeNextREV'] < int(time.time() / 60.)) ]
-
-    return study_subset
-
-    #subset = df[(df['Age'] > 30) & (df['City'] == 'London')]
 
 def mainLietner(row, answer):
     box_id = [-1, 0, 1, 3, 7, 15, 30, 60, 120]
@@ -54,7 +45,7 @@ def mainLietner(row, answer):
         row['BoxNo'] = 0
         row['MistakeNo'] += 1
     else:
-        card_box_id = row['BoxNo']
+        card_box_id = (row['BoxNo'].values)[0]
         if card_box_id < 120:
             # update box,  number if answer was positive
             row['BoxNo'] = box_id[box_id.index(card_box_id)+1]
@@ -72,20 +63,4 @@ def mainLietner(row, answer):
     return row
 
 def mainDataWriter(df):
-    df.to_csv("./data/data_bu.csv", index=False)
-
-
-
-'''
-df, df_temp = select_course("data.csv")
-data_rev, len_mis, len_rev, len_new, len_001, len_003, len_007, len_015, len_030, len_060, len_120 = data_monitor(df)
-df = study(df, data_rev)
-data_writer(df, df_temp)
-'''
-
-
-
-
-
-
-
+    df.to_csv("BladeLearner2049/data/data.csv", index=False)
