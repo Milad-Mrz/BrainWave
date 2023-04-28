@@ -53,11 +53,11 @@ def mainLietner(row, answer):
 
         else: # == 120
             # if first side is learnt 
-            if row['ActiveSide'] == 0 : 
+            if (row['ActiveSide'].values)[0] == 0 : 
                 row['ActiveSide'] = 1
                 row["NextREV"] = int(time.time()/60.) + 360 
 
-            if row['ActiveSide'] == 1 : 
+            if (row['ActiveSide'].values)[0] == 1 : 
                 row["NextREV"] = int(time.time()/60.) + 262800 
                 row['ActiveSide'] == 0
     return row
