@@ -1,5 +1,7 @@
 import pandas as pd
 import random
+import time
+
 
 import kivy
 from kivy.app import App
@@ -19,6 +21,7 @@ from lb_main import *
 
 class BladeLearner2049(App):
     def build(self):  
+        self.black = (0, 0, 0, 1)
         self.white = (1, 1, 1, 1)
         self.hide =  (1, 1, 1, 0)
 
@@ -60,6 +63,16 @@ class BladeLearner2049(App):
                         font_name='Allura_Regular',
                         font_size=20)
             
+            address = '../images/1cards.png'
+            img_bg1 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.62}, size_hint=(0.08, 0.08), allow_stretch=False, keep_ratio=False)
+            home.add_widget(img_bg1)
+            img_bg1.opacity = 1
+
+            address = '../images/1manage.png'
+            img_bg2 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.4}, size_hint=(0.04, 0.04), allow_stretch=False, keep_ratio=False)
+            home.add_widget(img_bg2)
+            img_bg2.opacity = 0
+            
             # setting a popup window on top for home page and buttons
             study_btn.bind(on_press= gui_category)
             #manage_btn.bind(on_press= gui_manage)
@@ -74,9 +87,25 @@ class BladeLearner2049(App):
         def gui_category(instance):
             category = FloatLayout()
 
+            address = '../images/1paper_2.png'
+            img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.6, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
+            category.add_widget(img_bg3)
+            img_bg3.opacity = 0.3
+
+            address = '../images/1paper_2.png'
+            img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.55, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
+            category.add_widget(img_bg3)
+            img_bg3.opacity = 0.6
+
+            address = '../images/1paper_2.png'
+            img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
+            category.add_widget(img_bg3)
+
+
             # setting a popup window on top for the page and buttons
             # create a grid of all topics and let user choose
             # create a grid of buttons for each option
+            # self.study_options  = ['Option1', 'Option2', 'Option3', 'Option4', 'Option5', 'Option1', 'Option2', 'Option3', 'Option4', 'Option5']
             len_option = len(self.study_options)
             if len_option > 20 : len_option = 20
             btn = [0]*len_option
@@ -88,27 +117,27 @@ class BladeLearner2049(App):
                 row = i // btn_columns
                 col = i % btn_columns
                 btn[i] = Button(text=option,
-                             background_color=self.hide, 
+                             background_color=(1,1,1,0.3), 
                              size_hint = (btn_size, btn_size),
-                             color=self.white,
+                             color=self.black,
                              font_name='Allura_Regular',
                              font_size=35)   
                 
-                xpos = 0.5 - btn_size*4/2.  + col*(btn_size+0.05)-0.05/2.*(btn_columns-1)
-                if i >= (len_option - res): xpos = (0.5-(res*btn_size/2))+(i-len_option+res)*(btn_size+0.05)   
+                xpos = 0.4 - btn_size*4/2.  + col*(btn_size+0.05)-0.05/2.*(btn_columns-1) + random.uniform(-0.03, 0.03)
+                if i >= (len_option - res): xpos = (0.5-(res*btn_size/2))+(i-len_option+res)*(btn_size+0.05) + random.uniform(-0.03, 0.03)  
 
-                btn[i].pos_hint = {'x': xpos, 'y': 0.5 + (len_option//(btn_columns*2) - row) * btn_size }
+                btn[i].pos_hint = {'x': xpos, 'y': 0.4 + (len_option//(btn_columns*2) - row) * btn_size }
 
                 btn[i].bind (on_press=select_category)
                 category.add_widget(btn[i])
 
             btn_return = Button(text='- Return -', 
                                 background_color=self.hide,
-                                color=self.white,
+                                color=self.black,
                                 size_hint=(0.4, 0.1),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.1},
                                 font_name='Allura_Regular',
-                                font_size=25)
+                                font_size=30)
             
             btn_return.bind(on_press=gui_home)
             category.add_widget(btn_return)           
@@ -127,14 +156,19 @@ class BladeLearner2049(App):
 
             study_type = FloatLayout()
 
+            address = '../images/1paper_1.png'
+            img_bg4 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
+            study_type.add_widget(img_bg4)
+            img_bg4.opacity = 0.6
+
             center_line = Label(text='____________________________________________',
                                 font_size ='18sp', size_hint=(0.2, 0.2),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.5})
-            center_line.color = (1,1,1,1)
+            center_line.color = self.black
 
             btn_Study = Button(text='Start Review', 
                                 background_color=self.hide,
-                                color=self.white,
+                                color=self.black,
                                 size_hint=(0.4, 0.07),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.525},
                                 font_name='Allura_Regular',
@@ -142,7 +176,7 @@ class BladeLearner2049(App):
             
             btn_common_mistakes = Button(text='Common Mistakes', 
                                 background_color=self.hide,
-                                color=self.white,
+                                color=self.black,
                                 size_hint=(0.4, 0.07),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.45},
                                 font_name='Allura_Regular',
@@ -186,10 +220,6 @@ class BladeLearner2049(App):
             df = self.data_frame
             if len(self.study_subset) == 0 :
                 self.study_subset = df[(df['Category'] == self.selected_category) & (df['TimeNextREV'] < int(time.time() / 60.)) ]
-
-                if len(self.study_subset) == 0 :
-                    #exit and write
-                    mainDataWriter(self.data_frame) 
             else:
                 gui_read_card()            
 
@@ -198,60 +228,87 @@ class BladeLearner2049(App):
             df = self.data_frame
             if len(self.study_subset) == 0 :
                 self.study_subset = df[(df['Category'] == self.selected_category) & (df['MistakeNo'] > 2) & (df['TimeNextREV'] < int(time.time() / 60.)) ]
-                if len(self.study_subset) == 0 :
-                    #exit and write
-                    mainDataWriter(self.data_frame) 
             else:               
-                gui_read_card()            
-                
+                gui_read_card()   
+
+        def gui_record():
+            text0 = ''
+            boxlist = [0, 1, 3, 7, 15, 30, 60, 120]
+            for boxID in boxlist:
+                status = self.data_frame[(self.data_frame['BoxNo'] == boxID) & (self.data_frame['Category'] == self.selected_category)]
+                text0 += '|  ' + str(len(status)) + '  |' 
+            text1 = ' ' * abs((len(text0)-6)//2) 
+            record = text1 + '[ Box - ' + str(int((self.row['BoxNo'].values)[0])) + ' ]\n\n' + text0
+            return record
+            
 
         def gui_read_card():
-            #read a random row
+            #read a ra"ndom row
             # show the card on gui and run the question and apply lietner data
-            self.row = self.study_subset.sample()
+            self.study_subset = self.study_subset[(self.study_subset['TimeNextREV'] < int(time.time() / 60.)) ]
+            if len(self.study_subset)>0: 
+                self.row = self.study_subset.sample()
+            else:
+                mainDataWriter(self.data_frame)
+                gui_category(1)
+                
 
             sideA = (self.row['SideA'].values)[0]
             sideB = (self.row['SideB'].values)[0]
+            source = str(self.selected_category) + '    ->    ...'
 
             if (self.row['ActiveSide'].values)[0] == 1 : 
                 sideA = (self.row['SideB'].values)[0]
                 sideB = (self.row['SideA'].values)[0]
+                source = '...    ->    ' + str(self.selected_category)
 
-            text0 = ''
-            boxlist = [-1, 0, 1, 3, 7, 15, 30, 60, 120]
-            for boxID in boxlist:
-                status = self.study_subset[(self.study_subset['BoxNo'] == boxID)]
-                text0 += '|  ' + str(len(status)) + '  |' 
-            text1 = ' ' * abs((len(text0)-6)//2) 
-            record = text1 + '[ Box - ' + str(int((self.row['BoxNo'].values)[0])) + ' ]\n' + text0
+            record = gui_record()
+
+            
 
             read_card = FloatLayout()
 
+            address = '../images/1paper_1.png'
+            img_bg5 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(0.7, 0.7), allow_stretch=False, keep_ratio=False)
+            read_card.add_widget(img_bg5)
+            img_bg5.opacity = 0.6
+
+
             center_line = Label(text= '____________________________________________',
-                                font_size ='18sp', size_hint=(0.2, 0.2),
-                                pos_hint={'center_x': 0.5, 'center_y': 0.75})
-            center_line.color = (1,1,1,1)
+                                font_size ='18sp', 
+                                size_hint=(0.2, 0.2),
+                                color = self.black,
+                                pos_hint={'center_x': 0.5, 'center_y': 0.65})
 
             center_line2 = Label(text= '____________________________________________',
-                                font_size ='18sp', size_hint=(0.2, 0.2),
-                                pos_hint={'center_x': 0.5, 'center_y': 0.5})
-            center_line.color = (1,1,1,1)
+                                font_size ='18sp', 
+                                size_hint=(0.2, 0.2),
+                                color = self.black,
+                                pos_hint={'center_x': 0.5, 'center_y': 0.35})
 
             btn_card = Button(text= sideA, 
                                 background_color=self.hide,
-                                color=self.white,
+                                color=self.black,
                                 size_hint=(0.4, 0.1),
-                                pos_hint={'center_x': 0.5, 'center_y': 0.6},
+                                pos_hint={'center_x': 0.5, 'center_y': 0.5},
                                 font_name='Allura_Regular',
                                 font_size=45)
             
-            btn_record = Button(text= record, 
+            lbl_source = Button(text= source, 
                                 background_color=self.hide,
-                                color=self.white,
+                                color=self.black,
                                 size_hint=(0.4, 0.07),
-                                pos_hint={'center_x': 0.5, 'center_y': 0.3},
+                                pos_hint={'center_x': 0.5, 'center_y': 0.65},
                                 font_name='Allura_Regular',
                                 font_size=20)
+            
+            btn_record = Button(text= record, 
+                                background_color=self.hide,
+                                color=self.black,
+                                size_hint=(0.4, 0.07),
+                                pos_hint={'center_x': 0.5, 'center_y': 0.35},
+                                font_name='Allura_Regular',
+                                font_size=18)
             
             btn_home = Button(text= '- Home -', 
                                 background_color=self.hide,
@@ -273,7 +330,7 @@ class BladeLearner2049(App):
                                 background_color=self.hide,
                                 color=self.hide,
                                 size_hint=(0.4, 0.1),
-                                pos_hint={'center_x': 0.8, 'center_y': 0.65},
+                                pos_hint={'center_x': 0.8, 'center_y': 0.55},
                                 font_name='Allura_Regular',
                                 font_size=20)
             
@@ -281,21 +338,24 @@ class BladeLearner2049(App):
                                 background_color=self.hide,
                                 color=self.hide,
                                 size_hint=(0.4, 0.1),
-                                pos_hint={'center_x': 0.8, 'center_y': 0.55},
+                                pos_hint={'center_x': 0.8, 'center_y': 0.45},
                                 font_name='Allura_Regular',
                                 font_size=20)
                 
             def gui_reveal_card(instance):
+                lbl_source.text = ' '
                 btn_card.text = sideB
                 btn_yes.color = self.white
                 btn_no.color = self.white
                 btn_card.bind(on_press=gui_pass)
 
             def gui_yes(instance):
+                btn_card.text = ' '
                 self.answer = 1
                 btn_yes.color = self.hide
                 btn_no.color = self.hide 
                 self.result = mainLietner(self.row, 1)
+                self.study_subset.update(self.result)
                 self.data_frame.update(self.result)
                 mainDataWriter(self.data_frame)
                 if self.common_mistake == 1:
@@ -305,10 +365,12 @@ class BladeLearner2049(App):
 
 
             def gui_no(instance):
+                btn_card.text = ' '
                 self.answer = 0
                 btn_yes.color = self.hide
                 btn_no.color = self.hide 
                 self.result = mainLietner(self.row, 0)
+                self.study_subset.update(self.result)
                 self.data_frame.update(self.result)
                 mainDataWriter(self.data_frame)
                 if self.common_mistake == 1:
@@ -329,21 +391,16 @@ class BladeLearner2049(App):
                 gui_category(1)
 
 
-            def on_keyboard(instance, keycode, text, modifiers):
-                if keycode[0] == 13:  # enter key for Yes button
-                    gui_yes(None)
-                elif keycode[0] == 32:  # space key for No button
-                    gui_no(None)
-                elif keycode[0] == 13:  # enter key for Reveal Card button
-                    gui_reveal_card(None)
-                return True
-
-            popup.bind(on_keyboard=on_keyboard)
+            
 
 
+            
+
+            
             read_card.add_widget(center_line)
             read_card.add_widget(center_line2)
             read_card.add_widget(btn_record) 
+            read_card.add_widget(lbl_source)
             
             btn_card.bind(on_press=gui_reveal_card)
             read_card.add_widget(btn_card)  

@@ -5,9 +5,6 @@ from lb_gui import *
 
 # Category,BoxNo,SideA,SideB,ActiveSide,TimeNextREV,MistakeNo
 
-# item lists
-answer_int = 0
-
 #   -1: new words
 #    0: to be reviewed now
 #    1: to be reviewed after a day
@@ -27,7 +24,7 @@ def mainDataCheck(df):
 
 def mainMapReduce():
     file_name = 'BladeLearner2049/data/data.csv'
-    # read file - file_name = "data.csv"  /home/milad/Desktop/Current Project/LearningBox/BladeLearner2049/data/data.csv   
+    # read file - file_name = "data.csv"   
     df = pd.read_csv(file_name)
     #clean the data
     df = mainDataCheck(df)
@@ -49,17 +46,18 @@ def mainLietner(row, answer):
         if card_box_id < 120:
             # update box,  number if answer was positive
             row['BoxNo'] = box_id[box_id.index(card_box_id)+1]
-            row["NextREV"] = int(time.time()/60.) + (1440 * row['BoxNo']) + 360
+            row["TimeNextREV"] = int(time.time()/60.) + (1440 * int((row['BoxNo'].values)[0])) + 360
 
         else: # == 120
             # if first side is learnt 
             if (row['ActiveSide'].values)[0] == 0 : 
                 row['ActiveSide'] = 1
-                row["NextREV"] = int(time.time()/60.) + 360 
+                row["TimeNextREV"] = int(time.time()/60.) + 360 
 
             if (row['ActiveSide'].values)[0] == 1 : 
-                row["NextREV"] = int(time.time()/60.) + 262800 
+                row["TimeNextREV"] = int(time.time()/60.) + 262800 
                 row['ActiveSide'] == 0
+                
     return row
 
 def mainDataWriter(df):
