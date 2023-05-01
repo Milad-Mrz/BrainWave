@@ -1,6 +1,5 @@
 import pandas as pd
 import time
-from lb_gui import *
 
 
 # Category,BoxNo,SideA,SideB,ActiveSide,TimeNextREV,MistakeNo
@@ -28,8 +27,10 @@ def mainMapReduce():
     df = pd.read_csv(file_name)
     #clean the data
     df = mainDataCheck(df)
+
+    tdf = df[(df['TimeNextREV'] < int(time.time() / 60.))]
     # read categories
-    study_options = df['Category'].unique().tolist()
+    study_options = tdf['Category'].unique().tolist()
     # call gui: first page containing all options to study 
     # ( course_A, ..., course_Z, French, Skill_A, ..., Skill_Z, Startup, Book, favourite_dialogues, work_place_dialogues, pickup_dialogues, poems)
     return study_options, df
@@ -41,6 +42,7 @@ def mainLietner(row, answer):
     if answer == 0 :
         row['BoxNo'] = 0
         row['MistakeNo'] += 1
+        row["TimeNextREV"] = int(time.time()/60.) + 360
     else:
         card_box_id = (row['BoxNo'].values)[0]
         if card_box_id < 120:
@@ -57,8 +59,7 @@ def mainLietner(row, answer):
             if (row['ActiveSide'].values)[0] == 1 : 
                 row["TimeNextREV"] = int(time.time()/60.) + 262800 
                 row['ActiveSide'] == 0
-                
     return row
-
+                
 def mainDataWriter(df):
     df.to_csv("BrainFlash/data/data.csv", index=False)

@@ -14,11 +14,17 @@ from kivy.uix.label import Label
 from kivy.uix.slider import Slider
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.image import AsyncImage
+from kivy.core.window import Window
+from kivy.uix.widget import Widget
+
 from lb_main import *
 
 
 class BrainFlash(App):
     def build(self):  
+        self._keyboard = None
+        self.flag = None
+
         self.black = (0, 0, 0, 1)
         self.white = (1, 1, 1, 1)
         self.hide =  (1, 1, 1, 0)
@@ -33,8 +39,10 @@ class BrainFlash(App):
         self.answer = None
         self.study_subset = []
 
+        
+
         def gui_home(instance):
-            self.study_options, self.data_frame  = mainMapReduce()
+            
 
             # setting  main window features
             home = FloatLayout()
@@ -79,7 +87,10 @@ class BrainFlash(App):
             popup.open()
         
         def gui_category(instance):
+            self.study_options, self.data_frame  = mainMapReduce()
             category = FloatLayout()
+
+
 
             address = '../images/1paper_2.png'
             img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.6, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
@@ -106,6 +117,7 @@ class BrainFlash(App):
             btn_columns = 4
             btn_size = 0.15 
             res = len_option % btn_columns  
+
             for i in range(len_option):
                 option = ">" + self.study_options[i] + "<"
                 row = i // btn_columns
@@ -132,6 +144,12 @@ class BrainFlash(App):
                                 pos_hint={'center_x': 0.5, 'center_y': 0.1},
                                 font_name='Allura_Regular',
                                 font_size=30)
+            
+            if len(self.study_options) == 0 : 
+                btn_return.text = '                Right now, \n there is no material available,\n                 to study \n\n   - Please check your material -'
+                btn_return.size_hint=(0.6, 0.6)                   
+                btn_return.pos_hint={'center_x': 0.5, 'center_y': 0.5}
+                btn_return.font_size=35
             
             btn_return.bind(on_press=gui_home)
             category.add_widget(btn_return)           
@@ -231,41 +249,55 @@ class BrainFlash(App):
             for boxID in boxlist:
                 status = self.data_frame[(self.data_frame['BoxNo'] == boxID) & (self.data_frame['Category'] == self.selected_category)]
                 text0 += '[' + str(boxID) + '] '+ str(len(status)) + '  |' 
+            
+
+
+
             record = 'B-' + str(int((self.row['BoxNo'].values)[0])) + ' |' + text0
             return record
             
 
         def gui_read_card():
-            #read a ra"ndom row
+
+            gui_read_card.flag = 0
+            #read a random row
             # show the card on gui and run the question and apply lietner data
             self.study_subset = self.study_subset[(self.study_subset['TimeNextREV'] < int(time.time() / 60.)) ]
-            if len(self.study_subset)>0: 
+            print(len(self.study_subset))
+            print(self.study_subset)
+
+            if len(self.study_subset) > 0: 
                 self.row = self.study_subset.sample()
-            else:
-                mainDataWriter(self.data_frame)
-                gui_category(1)
+                #self.study_subset.drop(self.row)
                 
 
             sideA = (self.row['SideA'].values)[0]
             sideB = (self.row['SideB'].values)[0]
-            source = str(self.selected_category) + ' ---> '
+            source = str(self.selected_category) + ' --> '
 
             if (self.row['ActiveSide'].values)[0] == 1 : 
                 sideA = (self.row['SideB'].values)[0]
                 sideB = (self.row['SideA'].values)[0]
-                source = '---> ' + str(self.selected_category)
+                source = '--> ' + str(self.selected_category)
+
+            MistakeN = int((self.row['MistakeNo'].values)[0])
+
+            if MistakeN <= 1: difficulty = 'Easy'
+            if MistakeN > 1:  difficulty = 'Normal'
+            if MistakeN > 4:  difficulty = 'High'
+
 
             record = gui_record()
 
 
-            record = source + '\n-------------------------------------------------------------------------------\n' + record
+            record = source + '?    -    Difficulty:   ' + difficulty + '\n-------------------------------------------------------------------------------\n' + record
 
             
 
             read_card = FloatLayout()
 
             address = '../images/1paper_1.png'
-            img_bg5 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(0.9, 0.9), allow_stretch=False, keep_ratio=False)
+            img_bg5 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
             read_card.add_widget(img_bg5)
             img_bg5.opacity = 1
 
@@ -292,7 +324,7 @@ class BrainFlash(App):
                                 size_hint=(0.7, 0.07),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.31},
                                 font_name='Allura_Regular',
-                                font_size=12)
+                                font_size=17)
             
             btn_home = Button(text= '- Home -', 
                                 background_color=self.hide,
@@ -325,6 +357,34 @@ class BrainFlash(App):
                                 pos_hint={'center_x': 0.8, 'center_y': 0.45},
                                 font_name='Allura_Regular',
                                 font_size=20)
+            
+
+            def _keyboard_closed(self):
+                self._keyboard.unbind(on_key_down=_on_keyboard_down)
+                self._keyboard = None
+
+            def _on_keyboard_down(self, keyboard, keycode, text):
+                reader = gui_read_card
+                #print(keycode)
+
+                if keycode == ' ' and reader.flag == 1:
+                    reader.flag = 2
+                    gui_reveal_card(1)
+
+                if keycode == 'p' and reader.flag == 2:
+                    reader.flag = 0
+                    gui_yes(1)
+
+                if keycode == 'm' and reader.flag == 2:
+                    reader.flag = 0
+                    gui_no(1)
+                # Return True to accept the key. Otherwise, it will be used by
+                # the system.
+                return True
+            
+            if self._keyboard == None :
+                self._keyboard = Window.request_keyboard(_keyboard_closed, self, 'text')
+
                 
             def gui_reveal_card(instance):
                 btn_answer.opacity = 0.8
@@ -344,10 +404,11 @@ class BrainFlash(App):
                 self.study_subset.update(self.result)
                 self.data_frame.update(self.result)
                 mainDataWriter(self.data_frame)
-                if self.common_mistake == 1:
-                    gui_common_mistakes(1)         
+                if len(self.study_subset) > 1: 
+                    gui_read_card()
                 else:
-                    gui_normal_study(1)
+                    b_return(0)
+                
 
 
             def gui_no(instance):
@@ -360,10 +421,10 @@ class BrainFlash(App):
                 self.study_subset.update(self.result)
                 self.data_frame.update(self.result)
                 mainDataWriter(self.data_frame)
-                if self.common_mistake == 1:
-                    gui_common_mistakes(1)         
+                if len(self.study_subset) > 1: 
+                    gui_read_card()
                 else:
-                    gui_normal_study(1)
+                    b_return(0)
 
             def gui_pass(instance):
                 pass
@@ -371,11 +432,13 @@ class BrainFlash(App):
 
             def b_home(instance):
                 mainDataWriter(self.data_frame)
-                gui_home(1)
+                gui_read_card.flag = 0
+                gui_home(0)
 
             def b_return(instance):
                 mainDataWriter(self.data_frame)
-                gui_category(1)
+                gui_read_card.flag = 0
+                gui_category(0)
 
             
             read_card.add_widget(btn_answer)
@@ -394,12 +457,21 @@ class BrainFlash(App):
             read_card.add_widget(btn_yes)
 
             btn_no.bind(on_press=gui_no)
-            read_card.add_widget(btn_no)        
+            read_card.add_widget(btn_no)  
+
+            
 
             popup.content = read_card
-            popup.title = ' '
+            popup.title = 'Hint:   <Space> -> Reveal the card    ||    <P> -> yes!    ||    <M> -> No! '
 
+            self._keyboard.bind(on_key_down=_on_keyboard_down)
+            gui_read_card.flag = 1
+            
             return
+
+        
+        
+
 
 
         # build GUI background page
