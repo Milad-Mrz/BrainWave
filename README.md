@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="./images/logo.jpg" alt="-_-">
+  <img src="./images/logo.png" alt="-_-">
 </p>
 
 
-# BladeLearner2049
+# BrainFlash
 This a simple customizable learning application based on Leitner system
