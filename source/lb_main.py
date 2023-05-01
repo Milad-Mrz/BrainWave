@@ -23,7 +23,7 @@ def mainDataCheck(df):
 
 
 def mainMapReduce():
-    file_name = 'BladeLearner2049/data/data.csv'
+    file_name = 'BrainFlash/data/data.csv'
     # read file - file_name = "data.csv"   
     df = pd.read_csv(file_name)
     #clean the data
@@ -61,4 +61,4 @@ def mainLietner(row, answer):
     return row
 
 def mainDataWriter(df):
-    df.to_csv("BladeLearner2049/data/data.csv", index=False)
+    df.to_csv("BrainFlash/data/data.csv", index=False)

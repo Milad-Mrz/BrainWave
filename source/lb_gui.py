@@ -66,16 +66,10 @@ class BrainFlash(App):
             home.add_widget(img_bg1)
             img_bg1.opacity = 1
 
-            address = '../images/logo.png'
-            #img_bg2 = AsyncImage(source=address, pos_hint={'center_x': 0.8, 'center_y': 0.1}, size_hint=(0.5, 0.5), allow_stretch=False, keep_ratio=False)
-            #home.add_widget(img_bg2)
-            #img_bg2.opacity = 1
-
             #BrainFlash
             
             # setting a popup window on top for home page and buttons
             study_btn.bind(on_press= gui_category)
-            #manage_btn.bind(on_press= gui_manage)
             
             home.add_widget(center_line)
             home.add_widget(study_btn)
@@ -90,7 +84,7 @@ class BrainFlash(App):
             address = '../images/1paper_2.png'
             img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.6, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
             category.add_widget(img_bg3)
-            img_bg3.opacity = 0.3
+            img_bg3.opacity = 0.4
 
             address = '../images/1paper_2.png'
             img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.55, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
@@ -274,11 +268,6 @@ class BrainFlash(App):
             img_bg5 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(0.9, 0.9), allow_stretch=False, keep_ratio=False)
             read_card.add_widget(img_bg5)
             img_bg5.opacity = 1
-            
-            
-            
-
-            
 
             btn_card = Button(text= sideA, 
                                 background_color=self.hide,
@@ -435,6 +424,3 @@ class BrainFlash(App):
 if __name__ == '__main__':
     BrainFlash().run()
     # here buid is automatically will run
-
-
-
