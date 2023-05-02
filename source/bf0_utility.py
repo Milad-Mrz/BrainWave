@@ -1,5 +1,7 @@
 import pandas as pd
 import time
+import os
+
 
 
 # Category,BoxNo,SideA,SideB,ActiveSide,TimeNextREV,MistakeNo
@@ -14,6 +16,13 @@ import time
 #  120: to be reviewed after 4 months
 #  999: output
 
+def mainAddress():
+    # get the current working directory
+    dir_path = os.getcwd()
+    #print("The current directory is:", dir_path)
+    return dir_path
+
+
 def mainDataCheck(df):
     # clean data 
     # check for 1-duplicates 2-zeros 3-... 
@@ -22,7 +31,8 @@ def mainDataCheck(df):
 
 
 def mainMapReduce():
-    file_name = 'BrainFlash/data/data.csv'
+    dir_path = mainAddress()
+    file_name = dir_path + '/data/data.csv'
     # read file - file_name = "data.csv"   
     df = pd.read_csv(file_name)
     #clean the data
@@ -62,4 +72,5 @@ def mainLietner(row, answer):
     return row
                 
 def mainDataWriter(df):
-    df.to_csv("BrainFlash/data/data.csv", index=False)
+    dir_path = mainAddress()
+    df.to_csv( dir_path + "/data/data.csv", index=False)

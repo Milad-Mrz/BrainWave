@@ -17,7 +17,7 @@ from kivy.uix.image import AsyncImage
 from kivy.core.window import Window
 from kivy.uix.widget import Widget
 
-from lb_main import *
+from bf0_utility import *
 
 
 class BrainFlash(App):
@@ -69,7 +69,8 @@ class BrainFlash(App):
                         font_name='Allura_Regular',
                         font_size=20)
             
-            address = '../images/1cards.png'
+            dir_path = mainAddress()
+            address = dir_path + '/images/1cards.png'
             img_bg1 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.62}, size_hint=(0.08, 0.08), allow_stretch=False, keep_ratio=False)
             home.add_widget(img_bg1)
             img_bg1.opacity = 1
@@ -92,17 +93,18 @@ class BrainFlash(App):
 
 
 
-            address = '../images/1paper_2.png'
+            dir_path = mainAddress()
+            address = dir_path + '/images/1paper_2.png'
             img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.6, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
             category.add_widget(img_bg3)
             img_bg3.opacity = 0.4
 
-            address = '../images/1paper_2.png'
+            address = dir_path + '/images/1paper_2.png'
             img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.55, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
             category.add_widget(img_bg3)
             img_bg3.opacity = 0.6
 
-            address = '../images/1paper_2.png'
+            address = dir_path + '/images/1paper_2.png'
             img_bg3 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
             category.add_widget(img_bg3)
 
@@ -165,10 +167,13 @@ class BrainFlash(App):
 
         def gui_study_type():
             self.study_subset = []
+            df = self.data_frame
+            cm = len(df[(df['Category'] == self.selected_category) & (df['MistakeNo'] > 2) & (df['TimeNextREV'] < int(time.time() / 60.)) ])
 
             study_type = FloatLayout()
 
-            address = '../images/1paper_1.png'
+            dir_path = mainAddress()
+            address = dir_path + '/images/1paper_1.png'
             img_bg4 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
             study_type.add_widget(img_bg4)
             img_bg4.opacity = 0.6
@@ -189,6 +194,7 @@ class BrainFlash(App):
             btn_common_mistakes = Button(text='Common Mistakes', 
                                 background_color=self.hide,
                                 color=self.black,
+                                opacity = 1,
                                 size_hint=(0.4, 0.07),
                                 pos_hint={'center_x': 0.5, 'center_y': 0.45},
                                 font_name='Allura_Regular',
@@ -223,6 +229,8 @@ class BrainFlash(App):
 
             btn_return.bind(on_press=gui_category)
             study_type.add_widget(btn_return)          
+
+            if cm == 0 : btn_common_mistakes.opacity = 0
 
             popup.content = study_type
             popup.title = ' '
@@ -263,8 +271,8 @@ class BrainFlash(App):
             #read a random row
             # show the card on gui and run the question and apply lietner data
             self.study_subset = self.study_subset[(self.study_subset['TimeNextREV'] < int(time.time() / 60.)) ]
-            print(len(self.study_subset))
-            print(self.study_subset)
+            #print(len(self.study_subset))
+            #print(self.study_subset)
 
             if len(self.study_subset) > 0: 
                 self.row = self.study_subset.sample()
@@ -296,7 +304,8 @@ class BrainFlash(App):
 
             read_card = FloatLayout()
 
-            address = '../images/1paper_1.png'
+            dir_path = mainAddress()
+            address = dir_path + '/images/1paper_1.png'
             img_bg5 = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
             read_card.add_widget(img_bg5)
             img_bg5.opacity = 1
@@ -478,7 +487,8 @@ class BrainFlash(App):
         layout = FloatLayout(size=(1200, 1600), size_hint=(1, 1))
 
         bg = FloatLayout(size_hint=(1, 1))
-        address = '../images/image'+str(random.randint(1, 18))+'.jpg'
+        dir_path = mainAddress()
+        address = dir_path + '/images/image'+str(random.randint(1, 18))+'.jpg'
         img_bg = AsyncImage(source=address, pos_hint={'center_x': 0.5, 'center_y': 0.5}, size_hint=(1, 1), allow_stretch=False, keep_ratio=False)
         bg.add_widget(img_bg)
         popup_bg = Popup(title=' ', content=bg, auto_dismiss=False, size_hint=(1, 1), pos_hint={'center_x': 0.5, 'center_y': 0.5})
