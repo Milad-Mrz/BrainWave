@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./images/logo_3.jpeg" alt="-_-">
+  <img src="./images/logo_4.jpeg" alt="-_-">
 </p>
 
 # BrainWave
